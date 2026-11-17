@@ -1,0 +1,35 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Universal binary
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test
+        run: swift test
+      - name: Build (arm64 + x86_64)
+        run: make release
+      - name: Check the version matches the tag
+        run: test "$(dist/kcsecret --version)" = "kcsecret ${GITHUB_REF_NAME#v}"
+      - name: Package
+        run: |
+          name="kcsecret-${GITHUB_REF_NAME}-macos-universal"
+          mkdir "$name"
+          cp dist/kcsecret LICENSE README.md "$name/"
+          tar -czf "$name.tar.gz" "$name"
+          shasum -a 256 "$name.tar.gz" > "$name.tar.gz.sha256"
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          notes=$(awk -v v="${GITHUB_REF_NAME#v}" '$0 ~ "^## \\[" v "\\]" {on=1; next} /^## \[/ {on=0} on' CHANGELOG.md)
+          gh release create "$GITHUB_REF_NAME" kcsecret-*.tar.gz kcsecret-*.sha256 \
+            --title "kcsecret ${GITHUB_REF_NAME}" --notes "${notes:-See CHANGELOG.md}"

@@ -1,0 +1,45 @@
+name: Bug report
+description: Something does not work as documented
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. **Never paste a secret**, a keychain item's value or a real `.env` file.
+        For a security issue, use [private vulnerability reporting](../security/advisories/new) instead.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: The command you ran, what you expected, and what you got (error text included).
+      placeholder: |
+        $ kcsecret import --all
+        kcsecret: error: ...
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: A minimal example, with made-up values.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: kcsecret version
+      description: Output of `kcsecret --version`
+    validations:
+      required: true
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version and chip
+      placeholder: macOS 15.3, Apple M2
+    validations:
+      required: true
+  - type: input
+    id: direnv
+    attributes:
+      label: direnv version and shell
+      placeholder: direnv 2.35.0, zsh 5.9

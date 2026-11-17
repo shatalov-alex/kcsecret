@@ -1,0 +1,19 @@
+# macOS
+.DS_Store
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved
+dist/
+
+# Editors
+.idea/
+.vscode/
+*.xcodeproj/
+xcuserdata/
+
+# Never commit real secrets (tests use fixtures inline)
+.env
+.env.*
+.envrc
