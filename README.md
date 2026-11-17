@@ -7,7 +7,6 @@
 Stop keeping API tokens in plaintext `.env` files. Move them into the keychain in one command,
 and get them back as environment variables when you `cd` into the project.
 
-[![CI](https://github.com/shatalov-alex/kcsecret/actions/workflows/ci.yml/badge.svg)](https://github.com/shatalov-alex/kcsecret/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/shatalov-alex/kcsecret?sort=semver)](https://github.com/shatalov-alex/kcsecret/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![macOS 13+](https://img.shields.io/badge/macOS-13%2B-black?logo=apple)

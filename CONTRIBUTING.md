@@ -62,7 +62,7 @@ Logic that can be tested without a keychain or a terminal belongs in `KCSecretCo
 2. Keep the change focused; update `README.md`, `kcsecret help` and `shell/ksecret.zsh` when you
    add or change a command or option.
 3. Add an entry under **Unreleased** in `CHANGELOG.md`.
-4. Make sure `swift test` and `make lint` pass; CI runs both on macOS 15 and 26.
+4. Make sure `swift test` and `make lint` pass.
 
 Code style: follow the surrounding code (4-space indentation in Swift, 2 in shell, lines up to
 about 120 characters). Prefer clear names over comments; comment the *why*.
