@@ -5,6 +5,9 @@
 #
 # Usage: scripts/release.sh X.Y.Z
 #
+# Then it points the Homebrew formula in the tap (a clone of shatalov-alex/homebrew-tap, by default
+# ../homebrew-tap next to this repository; KCSECRET_TAP sets another folder) at the new release.
+#
 # Before running: notes under "## [X.Y.Z] - date" in CHANGELOG.md, `version` set in
 # Sources/kcsecret/Support.swift, all committed and pushed to main.
 
@@ -18,6 +21,8 @@ CERT="signing/release-certificate.pem"
 NAME="kcsecret-$TAG-macos-universal"
 DIST="dist"
 SCRATCH=".build/release-universal"
+TAP="${KCSECRET_TAP:-../homebrew-tap}"
+FORMULA="$TAP/Formula/kcsecret.rb"
 
 fail() { echo "error: $1" >&2; exit 1; }
 step() { echo "==> $1"; }
@@ -34,6 +39,9 @@ git fetch -q origin main
 [ "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" ] || fail "main is not in sync with origin/main"
 ! git rev-parse -q --verify "refs/tags/$TAG" >/dev/null || fail "tag $TAG already exists"
 grep -qx "let version = \"$VERSION\"" Sources/kcsecret/Support.swift || fail "Sources/kcsecret/Support.swift is not at $VERSION"
+[ -f "$FORMULA" ] || fail "no Homebrew formula at $FORMULA: clone shatalov-alex/homebrew-tap there, or set KCSECRET_TAP"
+[ -z "$(git -C "$TAP" status --porcelain)" ] || fail "the tap ($TAP) has uncommitted changes"
+git -C "$TAP" pull -q --ff-only || fail "cannot update the tap ($TAP)"
 CHANGES="$(awk -v v="$VERSION" '$0 ~ "^## \\[" v "\\]" {on=1; next} /^## \[/ {on=0} on' CHANGELOG.md | grep -v '^\[.*\]: ')"
 [ -n "$(tr -d '[:space:]' <<<"$CHANGES")" ] || fail "CHANGELOG.md has no notes under ## [$VERSION]"
 
@@ -110,3 +118,20 @@ step "creating the GitHub release"
 gh release create "$TAG" -R "$REPO" --verify-tag --latest --title "kcsecret $VERSION" --notes-file "$NOTES" \
     "$DIST/$NAME.tar.gz" "$DIST/$NAME.tar.gz.sha256" "$CERT"
 echo "released: https://github.com/$REPO/releases/tag/$TAG"
+
+# MARK: - Homebrew
+step "updating the Homebrew formula"
+TAR_SHA="$(cut -d' ' -f1 < "$DIST/$NAME.tar.gz.sha256")"
+ZSH_SHA="$(shasum -a 256 shell/ksecret.zsh | cut -d' ' -f1)"
+# The formula's first url/sha256 pair is the release archive, the second the zsh integration
+sed -i '' -E \
+    -e "s#/releases/download/v[0-9.]+/kcsecret-v[0-9.]+-macos-universal.tar.gz#/releases/download/$TAG/$NAME.tar.gz#" \
+    -e "s#/kcsecret/v[0-9.]+/shell/ksecret.zsh#/kcsecret/$TAG/shell/ksecret.zsh#" \
+    -e "1,/sha256 \"/ s/sha256 \"[0-9a-f]+\"/sha256 \"$TAR_SHA\"/" \
+    "$FORMULA"
+awk -v s="$ZSH_SHA" '/resource "ksecret.zsh"/ {r=1} r && /sha256 "/ {sub(/"[0-9a-f]+"/, "\"" s "\""); r=0} {print}' \
+    "$FORMULA" > "$FORMULA.new" && mv "$FORMULA.new" "$FORMULA"
+grep -q "$TAR_SHA" "$FORMULA" && grep -q "$ZSH_SHA" "$FORMULA" || fail "could not update $FORMULA; edit it by hand"
+git -C "$TAP" commit -q -am "kcsecret $VERSION"
+git -C "$TAP" push -q
+echo "brew upgrade kcsecret now installs $VERSION"

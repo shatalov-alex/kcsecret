@@ -78,6 +78,9 @@ The script runs on the maintainer's Mac, which holds the release certificate (ma
 certificate, and checks the version, the signature and that nothing personal (home folder, user
 name, email address) ended up in the binary or the archive. Only then does it tag the version and
 publish the archive, its SHA-256, the certificate and the changelog notes as a GitHub release.
+Last, it points the Homebrew formula in a clone of
+[shatalov-alex/homebrew-tap](https://github.com/shatalov-alex/homebrew-tap) (`../homebrew-tap`,
+or `KCSECRET_TAP`) at the new release and pushes it.
 
 ## Code of conduct
 

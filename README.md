@@ -69,7 +69,18 @@ direnv: export +OPENAI_API_KEY +STRIPE_SECRET_KEY
 Requires macOS 13 or later and [direnv](https://direnv.net) hooked into your shell
 (`brew install direnv`, then [hook it](https://direnv.net/docs/hook.html)).
 
-### From source (recommended)
+### Homebrew (recommended)
+
+```zsh
+brew install shatalov-alex/tap/kcsecret
+echo "source $(brew --prefix)/opt/kcsecret/share/kcsecret/ksecret.zsh" >> ~/.zshrc  # ksecret shortcut, tab completion
+exec zsh
+```
+
+Update with `brew upgrade kcsecret`. Homebrew installs the signed release binary unchanged (see
+[Prebuilt binary](#prebuilt-binary)), so the keychain keeps trusting kcsecret across upgrades.
+
+### From source
 
 Needs Xcode or the Command Line Tools (`xcode-select --install`).
 
@@ -484,7 +495,6 @@ Ideas under consideration, roughly in order. Comments and pull requests welcome.
   and offer to import them.
 - **`kcsecret get --copy`**: copy a secret to the clipboard and clear it after 30 seconds, for
   pasting into web forms.
-- **Homebrew tap**: `brew install shatalov-alex/tap/kcsecret`.
 
 ## Contributing
 

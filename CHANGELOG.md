@@ -6,6 +6,10 @@ All notable changes to kcsecret are listed here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- Homebrew: `brew install shatalov-alex/tap/kcsecret`.
+
 ## [1.0.0] - 2026-11-17
 
 First public release, under the MIT license. The release binary is universal (Apple silicon and
