@@ -17,3 +17,6 @@ xcuserdata/
 .env
 .env.*
 .envrc
+
+# The public release certificate (no private key), kept despite a global *.pem ignore
+!signing/release-certificate.pem

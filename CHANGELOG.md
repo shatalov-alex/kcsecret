@@ -6,9 +6,10 @@ All notable changes to kcsecret are listed here. The format follows
 
 ## [Unreleased]
 
-## [1.0.0] - 2026-11-14
+## [1.0.0] - 2026-11-17
 
-First public release, under the MIT license.
+First public release, under the MIT license. The release binary is universal (Apple silicon and
+Intel) and signed with the project's self-signed certificate, so updates keep the keychain's trust.
 
 ### Added
 

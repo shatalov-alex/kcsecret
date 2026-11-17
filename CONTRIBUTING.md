@@ -62,7 +62,7 @@ Logic that can be tested without a keychain or a terminal belongs in `KCSecretCo
 2. Keep the change focused; update `README.md`, `kcsecret help` and `shell/ksecret.zsh` when you
    add or change a command or option.
 3. Add an entry under **Unreleased** in `CHANGELOG.md`.
-4. Make sure `swift test` and `make lint` pass; CI runs both on macOS 14 and 15.
+4. Make sure `swift test` and `make lint` pass; CI runs both on macOS 15 and 26.
 
 Code style: follow the surrounding code (4-space indentation in Swift, 2 in shell, lines up to
 about 120 characters). Prefer clear names over comments; comment the *why*.
@@ -71,10 +71,13 @@ about 120 characters). Prefer clear names over comments; comment the *why*.
 
 1. Move the **Unreleased** notes in `CHANGELOG.md` under a new version heading.
 2. Update `version` in `Sources/kcsecret/Support.swift`.
-3. Commit, then tag and push: `git tag v1.2.3 && git push origin v1.2.3`.
+3. Commit and push to `main`, then run `scripts/release.sh 1.2.3`.
 
-The release workflow tests, builds a universal binary, checks that `kcsecret --version` matches
-the tag, and publishes the archive with its SHA-256 and the changelog notes.
+The script runs on the maintainer's Mac, which holds the release certificate (made once with
+`scripts/create_signing_certificate.sh`). It tests, builds a universal binary, signs it with that
+certificate, and checks the version, the signature and that nothing personal (home folder, user
+name, email address) ended up in the binary or the archive. Only then does it tag the version and
+publish the archive, its SHA-256, the certificate and the changelog notes as a GitHub release.
 
 ## Code of conduct
 

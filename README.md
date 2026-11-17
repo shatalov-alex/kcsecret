@@ -84,10 +84,32 @@ to install somewhere other than `~/.local/bin`. To update: `git -C ~/.kcsecret p
 
 ### Prebuilt binary
 
-Download `kcsecret-vX.Y.Z-macos-universal.tar.gz` from
-[Releases](https://github.com/shatalov-alex/kcsecret/releases), check it against the `.sha256`
-file, and put `kcsecret` on your `PATH`. For the `ksecret` shortcut and tab completion, also
-source [`shell/ksecret.zsh`](shell/ksecret.zsh) from `~/.zshrc`.
+Each [release](https://github.com/shatalov-alex/kcsecret/releases) has a universal binary for
+Apple silicon and Intel:
+
+```zsh
+v=v1.0.0  # the latest release
+curl -fsSLO https://github.com/shatalov-alex/kcsecret/releases/download/$v/kcsecret-$v-macos-universal.tar.gz
+curl -fsSLO https://github.com/shatalov-alex/kcsecret/releases/download/$v/kcsecret-$v-macos-universal.tar.gz.sha256
+shasum -a 256 -c kcsecret-$v-macos-universal.tar.gz.sha256
+tar -xzf kcsecret-$v-macos-universal.tar.gz
+mkdir -p ~/.local/bin && mv kcsecret-$v-macos-universal/kcsecret ~/.local/bin/
+```
+
+Downloaded with a browser instead? The binary is not notarized, so macOS blocks it until you run
+`xattr -d com.apple.quarantine ~/.local/bin/kcsecret`. For the `ksecret` shortcut and tab
+completion, also source [`shell/ksecret.zsh`](shell/ksecret.zsh) from `~/.zshrc`.
+
+Releases are signed with the project's self-signed certificate,
+[`signing/release-certificate.pem`](signing/release-certificate.pem). Every release uses the same
+one, so the keychain keeps trusting kcsecret when you update. To check that a binary comes from
+this project:
+
+```zsh
+codesign -d -r- ~/.local/bin/kcsecret
+```
+
+The output must contain `8b9f34eab7b2214684acee8e01413860954e5f12`, the certificate's SHA-1 fingerprint.
 
 ### Signing
 
